@@ -66,10 +66,11 @@ Notes:
   - Manual run (`workflow_dispatch`)
   - Push to `main`
   - Tag push matching `v*`
-- Output artifact:
+- Outputs:
   - `skills-<short-sha-or-tag>.zip`
   - `skills-<short-sha-or-tag>.zip.sha256`
 - Zip content source:
   - Skill folders listed in `SKILLS.md`
   - Runtime docs (`SKILLS.md`, `README.md`, `AGENTS.md`, `CLAUDE.md`, `CURSOR.md`)
-- Download from the workflow run page in GitHub Actions.
+- On tag pushes (`v*`), a GitHub Release is also created and these files are attached.
+- Artifacts are downloadable from the workflow run page in GitHub Actions.
