@@ -1,49 +1,29 @@
 # AGENTS.md
 
-Instructions for AI coding agents working in this repository.
+Runtime instructions for AI agents using this repository.
 
-## Repository Purpose
+## Scope
 
-- Store reusable skills for local tools.
-- Keep one skill per folder.
-- Keep a single root catalog at `SKILLS.md`.
+- Use this repo as a skill catalog and install source.
+- Default path for discovery is `SKILLS.md`.
+- Skill implementation details live in `<skill-name>/SKILL.md`.
 
-## First Steps
+## Usage Flow
 
-1. Read `README.md` for repository conventions.
-2. Read `SKILLS.md` to understand existing skills and paths.
-3. Open only the skill files needed for the user request.
+1. Read `README.md` for installation and usage commands.
+2. Find the needed skill in `SKILLS.md`.
+3. Open the target `<skill-name>/SKILL.md`.
+4. Load `references/` only if needed by the task.
 
-## Skill Authoring Rules
+## Install Rules
 
-- Every skill folder must include `SKILL.md` with YAML frontmatter:
-  - `name`
-  - `description`
-- Keep `SKILL.md` concise and workflow-oriented.
-- Move long details into `references/`.
-- Add `scripts/` only for deterministic or repeated tasks.
-- Update `SKILLS.md` when adding, renaming, or removing a skill.
+- Use `python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py`.
+- Use `--repo leoustc/skills` (no `.git`) or the full `github.com` URL form.
+- `--path` must point to a folder that contains `SKILL.md`.
+- Installed location is `~/.codex/skills/<skill-name>`.
+- Restart Codex after install.
 
-## Expected Structure
+## Behavior Expectations
 
-```text
-<skill-name>/
-  SKILL.md
-  references/   (optional)
-  scripts/      (optional)
-  assets/       (optional)
-```
-
-## Editing Guidelines
-
-- Prefer small, targeted changes.
-- Avoid creating extra docs inside skill folders unless directly useful to skill execution.
-- Keep examples copy/paste-ready.
-- Preserve existing style and naming patterns.
-
-## Definition Of Done
-
-1. The changed skill is registered in `SKILLS.md`.
-2. Paths in `SKILLS.md` are correct.
-3. `SKILL.md` frontmatter is present and valid.
-4. Any referenced files exist.
+- Keep responses focused on using and installing skills.
+- Do not introduce development or authoring guidance unless explicitly requested.

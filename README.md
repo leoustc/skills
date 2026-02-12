@@ -6,9 +6,6 @@ Skill collection for tools built for AI infra and beyond.
 
 - `SKILLS.md`: root catalog and discovery index
 - `<skill-name>/SKILL.md`: required skill definition used by Codex
-- `<skill-name>/references/`: optional deep guidance loaded on demand
-- `<skill-name>/scripts/`: optional executable helpers
-- `<skill-name>/assets/`: optional templates or static assets
 
 ## Agent Files
 
@@ -16,8 +13,6 @@ Skill collection for tools built for AI infra and beyond.
 - `CLAUDE.md`: compatibility alias pointing to `AGENTS.md`
 - `CURSOR.md`: compatibility alias pointing to `AGENTS.md`
 - `.github/copilot-instructions.md`: Copilot-facing instructions synced with `AGENTS.md`
-- `SKILL_TEMPLATE.md`: copy/paste starter for new skills
-- `PROMPT_EXAMPLES.md`: reusable prompts for common maintenance tasks
 
 ## How To Use
 
@@ -43,31 +38,38 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
   --url https://github.com/leoustc/skills/tree/main/ssh-tunnel-gateway
 ```
 
+Install all skills listed in `SKILLS.md`:
+
+```bash
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --repo leoustc/skills \
+  --path $(
+    awk -F'`' '/\|/ && $2 ~ /^\.\/.*\/SKILL\.md$/ {
+      p=$2
+      sub("^\\./","",p)
+      sub("/SKILL\\.md$","",p)
+      print p
+    }' SKILLS.md
+  )
+```
+
 Notes:
 - The selected folder must contain `SKILL.md`.
 - Skills install to `~/.codex/skills/<skill-name>`.
 - Use `leoustc/skills` for `--repo` (no `.git` suffix).
 - Restart Codex after install so new skills are loaded.
 
-## Add A New Skill
+## Download Packaged Zip
 
-1. Create a folder: `<skill-name>/`
-2. Add `<skill-name>/SKILL.md` with required frontmatter:
-
-```md
----
-name: <skill-name>
-description: <when to use this skill and what it does>
----
-```
-
-3. Keep `SKILL.md` concise with trigger conditions (`Use This Skill When`), a short workflow, and links to deeper details in `references/`.
-4. Add optional `scripts/` for repeatable or fragile operations.
-5. Register the skill in root `SKILLS.md` (name, use-when, path).
-
-## Authoring Rules
-
-- One tool/domain per skill folder.
-- Prefer one root `SKILLS.md` as the canonical catalog.
-- Avoid large monolithic `SKILL.md` files; move detail to `references/`.
-- Keep operational commands copy/paste-ready when possible.
+- Workflow: `.github/workflows/package-skills.yml`
+- Triggers:
+  - Manual run (`workflow_dispatch`)
+  - Push to `main`
+  - Tag push matching `v*`
+- Output artifact:
+  - `skills-<short-sha-or-tag>.zip`
+  - `skills-<short-sha-or-tag>.zip.sha256`
+- Zip content source:
+  - Skill folders listed in `SKILLS.md`
+  - Runtime docs (`SKILLS.md`, `README.md`, `AGENTS.md`, `CLAUDE.md`, `CURSOR.md`)
+- Download from the workflow run page in GitHub Actions.

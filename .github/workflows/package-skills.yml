@@ -1,0 +1,95 @@
+name: Package Skills Zip
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build zip archive
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            version="${GITHUB_REF#refs/tags/}"
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          archive="skills-${version}.zip"
+          archive_path="dist/${archive}"
+          bundle_dir="dist/bundle"
+
+          mapfile -t skill_paths < <(
+            awk -F'`' '/\|/ && $2 ~ /^\.\/.*\/SKILL\.md$/ {
+              p=$2
+              sub("^\\./","",p)
+              sub("/SKILL\\.md$","",p)
+              print p
+            }' SKILLS.md
+          )
+
+          if [[ ${#skill_paths[@]} -eq 0 ]]; then
+            echo "No skill paths found in SKILLS.md"
+            exit 1
+          fi
+
+          rm -rf "${bundle_dir}"
+          mkdir -p "${bundle_dir}"
+
+          for root_file in SKILLS.md README.md AGENTS.md CLAUDE.md CURSOR.md; do
+            if [[ -f "${root_file}" ]]; then
+              cp "${root_file}" "${bundle_dir}/"
+            fi
+          done
+
+          for skill in "${skill_paths[@]}"; do
+            if [[ ! -f "${skill}/SKILL.md" ]]; then
+              echo "Missing SKILL.md for ${skill}"
+              exit 1
+            fi
+
+            parent="$(dirname "${skill}")"
+            if [[ "${parent}" == "." ]]; then
+              cp -R "${skill}" "${bundle_dir}/"
+            else
+              mkdir -p "${bundle_dir}/${parent}"
+              cp -R "${skill}" "${bundle_dir}/${parent}/"
+            fi
+          done
+
+          (
+            cd "${bundle_dir}"
+            zip -r "../${archive}" .
+          )
+
+          sha256sum "${archive_path}" > "${archive_path}.sha256"
+
+          echo "archive_name=${archive}" >> "${GITHUB_OUTPUT}"
+          echo "archive_path=${archive_path}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.archive_name }}
+          path: |
+            ${{ steps.package.outputs.archive_path }}
+            ${{ steps.package.outputs.archive_path }}.sha256
+          if-no-files-found: error
+          retention-days: 30
