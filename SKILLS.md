@@ -13,4 +13,5 @@ This repository stores Codex skills for local tools.
 
 | Name | Use When | Path |
 | --- | --- | --- |
+| nf-iac-plugin | Configuring, operating, and debugging the `nf-iac` Nextflow executor with OCI + object-storage workflows | `./nf-iac-plugin/SKILL.md` |
 | ssh-tunnel-gateway | Running, configuring, or releasing the SSH tunnel gateway server/agent tools | `./ssh-tunnel-gateway/SKILL.md` |

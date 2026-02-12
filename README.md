@@ -31,6 +31,14 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
   --path ssh-tunnel-gateway
 ```
 
+Install the `nf-iac-plugin` skill:
+
+```bash
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --repo leoustc/skills \
+  --path nf-iac-plugin
+```
+
 Install from a full GitHub URL:
 
 ```bash
