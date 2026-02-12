@@ -11,7 +11,7 @@ save:
 	git commit -m "chore: update $$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 	git push $(REMOTE)
 
-release:
+release: save
 	@set -eu; \
 	latest="$$(git ls-remote --tags --refs "$(REMOTE)" 'v*' | sed 's#.*refs/tags/##' | sort -V | tail -n 1)"; \
 	if [ -z "$$latest" ]; then \
