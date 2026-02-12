@@ -26,6 +26,29 @@ Skill collection for tools built for AI infra and beyond.
 3. Codex reads `<skill-name>/SKILL.md` first.
 4. Codex loads `references/` only when needed and runs `scripts/` when deterministic execution is better than ad-hoc generation.
 
+## Install Skills Into Codex
+
+Install this repo's example skill from `leoustc/skills`:
+
+```bash
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --repo leoustc/skills \
+  --path ssh-tunnel-gateway
+```
+
+Install from a full GitHub URL:
+
+```bash
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --url https://github.com/leoustc/skills/tree/main/ssh-tunnel-gateway
+```
+
+Notes:
+- The selected folder must contain `SKILL.md`.
+- Skills install to `~/.codex/skills/<skill-name>`.
+- Use `leoustc/skills` for `--repo` (no `.git` suffix).
+- Restart Codex after install so new skills are loaded.
+
 ## Add A New Skill
 
 1. Create a folder: `<skill-name>/`
